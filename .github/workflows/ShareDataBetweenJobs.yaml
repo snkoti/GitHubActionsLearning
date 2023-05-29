@@ -1,0 +1,47 @@
+name: GitHub Actions Data Sharing
+# run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
+  push:
+    ## on pushes to given branches
+    branches: super_test_branch
+  workflow_dispatch:
+  pull_request:
+    types: closed
+defaults:
+  run:
+    shell: pwsh
+jobs:
+  make-some-dater:
+    runs-on: ubuntu-latest
+    outputs:
+      my_cool_data: ${{ steps.set_step_output.outputs.my_step_output-singleLine }}
+      my_cool_data_fromMultiLine: ${{ steps.set_step_output.outputs.my_step_output-multiLine }}
+    steps:
+      - name: set outputs JSON value
+        id: set_step_output
+        run: |-
+          echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+          echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+          echo "🔎 Branch '${{ github.ref }}', in repository '${{ github.repository }}'"
+          Write-Verbose -Verbose -Message "Value of `$env:GITHUB_OUTPUT: '$env:GITHUB_OUTPUT'"
+          Write-Output "my_step_output-singleLine=$(Get-ChildItem '${{ github.workspace }}' | Select-Object Mode, LastWriteTime, Length, Name | ConverTto-Json -Depth 10 -Compress)" >> $env:GITHUB_OUTPUT
+          ## can use multi-line strings as values, too; docs at https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter, which link to "Multiline strings" in same doc, too
+          $strSomeGuid = (New-Guid).Guid
+          Write-Output "my_step_output-multiLine=<<$strSomeGuid$(Get-ChildItem '${{ github.workspace }}' | Select-Object Mode, LastWriteTime, Length, Name | ConverTto-Json -Depth 10)$strSomeGuid" >> $env:GITHUB_OUTPUT
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: |-
+          echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+          echo "🖥️ The workflow is now ready to test your code on the runner."
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+  use-some-dater:
+    runs-on: ubuntu-latest
+    needs: make-some-dater
+    steps:
+      - name: use data from previous job
+        run: |-
+          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-make-some-dater.outputs.my_cool_data': '${{needs.make-make-some-dater.outputs.my_cool_data}}'"
+          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-make-some-dater.outputs.my_cool_data_fromMultiLine': '${{needs.make-make-some-dater.outputs.my_step_output-multiLine}}'"
+          $oMyCoolObject = @{Name = "Roscoe"; Datetime = Get_Date; DirectoryListing = '${{needs.make-make-some-dater.outputs.my_cool_data}}' | ConvertFrom-Json}
+          Write-Verbose -Verbose -Message "JSON of new object created with outputs value as sub property: '$($oMyCoolObject | ConvertTo-Json -Depth 10)'"
