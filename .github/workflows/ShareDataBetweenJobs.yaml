@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: use data from previous job
         run: |-
-          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-make-some-dater.outputs.my_cool_data': '${{needs.make-make-some-dater.outputs.my_cool_data}}'"
-          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-make-some-dater.outputs.my_cool_data_fromMultiLine': '${{needs.make-make-some-dater.outputs.my_step_output-multiLine}}'"
-          $oMyCoolObject = @{Name = "Roscoe"; Datetime = Get_Date; DirectoryListing = '${{needs.make-make-some-dater.outputs.my_cool_data}}' | ConvertFrom-Json}
+          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-make-some-dater.outputs.my_cool_data': '${{needs.make-some-dater.outputs.my_cool_data}}'"
+          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-make-some-dater.outputs.my_cool_data_fromMultiLine': '${{needs.make-some-dater.outputs.my_step_output-multiLine}}'"
+          $oMyCoolObject = @{Name = "Roscoe"; Datetime = Get-Date; DirectoryListing = '${{needs.make-make-some-dater.outputs.my_cool_data}}' | ConvertFrom-Json}
           Write-Verbose -Verbose -Message "JSON of new object created with outputs value as sub property: '$($oMyCoolObject | ConvertTo-Json -Depth 10)'"
