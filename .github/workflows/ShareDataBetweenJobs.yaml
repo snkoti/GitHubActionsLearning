@@ -25,10 +25,13 @@ jobs:
           echo "🔎 Branch '${{ github.ref }}', in repository '${{ github.repository }}'"
           Write-Verbose -Verbose -Message "Value of `$env:GITHUB_OUTPUT: '$env:GITHUB_OUTPUT'"
           Write-Verbose -Verbose -Message "Setting some output items for use by later jobs"
-          Write-Output "my_step_output-singleLine=$(Get-ChildItem '${{ github.workspace }}' | Select-Object Mode, LastWriteTime, Length, Name | ConverTto-Json -Depth 10 -Compress)" >> $env:GITHUB_OUTPUT
+          $oDirectoryListing = Get-ChildItem '${{ github.workspace }}' | Select-Object -Property Mode, LastWriteTime, Length, Name
+          Write-Output "my_step_output-singleLine=$($oDirectoryListing | ConvertTo-Json -Depth 10 -Compress)" >> $env:GITHUB_OUTPUT
           ## can use multi-line strings as values, too; docs at https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter, which link to "Multiline strings" in same doc, too
           $strSomeGuid = (New-Guid).Guid
-          Write-Output "my_step_output-multiLine=<<$strSomeGuid$(Get-ChildItem '${{ github.workspace }}' | Select-Object Mode, LastWriteTime, Length, Name | ConverTto-Json -Depth 10)$strSomeGuid" >> $env:GITHUB_OUTPUT
+          Write-Output "my_step_output-multiLine=<<$strSomeGuid$($oDirectoryListing | ConvertTo-Json -Depth 10)$strSomeGuid" >> $env:GITHUB_OUTPUT
+          Write-Verbose -Verbose -Message "Getting contents of '`$env:GITHUB_OUTPUT':"
+          Get-Content -Path $env:GITHUB_OUTPUT
       - name: Check out repository code
         uses: actions/checkout@v3
       - run: |-
