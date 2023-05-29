@@ -27,11 +27,13 @@ jobs:
           echo "🔎 Branch '${{ github.ref }}', in repository '${{ github.repository }}'"
           Write-Verbose -Verbose -Message "Value of `$env:GITHUB_OUTPUT: '$env:GITHUB_OUTPUT'"
           Write-Verbose -Verbose -Message "Setting some output items for use by later jobs"
-          $arrFilesystemItems = Get-ChildItem '${{ github.workspace }}' | Select-Object -Property Mode, LastWriteTime, Length, Name
+          ## some `runner` context info at https://docs.github.com/en/actions/learn-github-actions/contexts#runner-context
+          $arrFilesystemItems = Get-ChildItem '${{ runner.tool_cache }}' | Select-Object -Property Mode, LastWriteTime, Length, Name
           Write-Output "my_step_output-singleLine=$($arrFilesystemItems | ConvertTo-Json -Depth 10 -Compress)" >> $env:GITHUB_OUTPUT
           ## can use multi-line strings as values, too; docs at https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter, which link to "Multiline strings" in same doc, too
+          ## notice no assignment character (no '=') when using multiline in GHA
           $strSomeGuid = (New-Guid).Guid
-          Write-Output "my_step_output-multiLine=<<$strSomeGuid`n$($arrFilesystemItems | ConvertTo-Json -Depth 10)`n$strSomeGuid" >> $env:GITHUB_OUTPUT
+          Write-Output "my_step_output-multiLine<<$strSomeGuid`n$($arrFilesystemItems | ConvertTo-Json -Depth 10)`n$strSomeGuid" >> $env:GITHUB_OUTPUT
           Write-Verbose -Verbose -Message "Getting contents of '`$env:GITHUB_OUTPUT':"
           Get-Content -Path $env:GITHUB_OUTPUT
       - run: |-
