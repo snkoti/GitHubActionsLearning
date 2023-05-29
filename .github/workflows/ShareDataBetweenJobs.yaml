@@ -35,7 +35,7 @@ jobs:
           ## notice no assignment character (no '=') when using multiline in GHA
           $strSomeGuid = (New-Guid).Guid
           Write-Verbose -Verbose -Message "Using standard PowerShell cmdlet for adding content"
-          Add-Content -Path $env:GITHUB_OUTPUT -Value "my_step_output-multiLine<<$strSomeGuid`n$($arrFilesystemItems | ConvertTo-Json -Depth 10)`n$strSomeGuid"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "my_step_output-multiLine<<$strSomeGuid`n$($arrFilesystemItems | ConvertTo-Json -Depth 10)`n$strSomeGuid" -Encoding utf8
           Write-Verbose -Verbose -Message "Getting contents of '`$env:GITHUB_OUTPUT':"
           Get-Content -Path $env:GITHUB_OUTPUT
       - run: |-
