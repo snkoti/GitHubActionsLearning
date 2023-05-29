@@ -14,16 +14,17 @@ jobs:
   make-some-dater:
     runs-on: ubuntu-latest
     outputs:
-      my_cool_data: ${{ steps.set_step_output.outputs.my_step_output-singleLine }}
-      my_cool_data_fromMultiLine: ${{ steps.set_step_output.outputs.my_step_output-multiLine }}
+      myCoolDataFromSingleLine: ${{ steps.set_step_output.outputs.my_step_output-singleLine }}
+      myCoolDataFromMultiline: ${{ steps.set_step_output.outputs.my_step_output-multiLine }}
     steps:
       - name: set outputs JSON value
         id: set_step_output
         run: |-
-          echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-          echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+          echo "🎉 The job was automatically triggered by event '${{ github.event_name }}'"
+          echo "🐧 This job is now running on a '${{ runner.os }}' server hosted by GitHub!"
           echo "🔎 Branch '${{ github.ref }}', in repository '${{ github.repository }}'"
           Write-Verbose -Verbose -Message "Value of `$env:GITHUB_OUTPUT: '$env:GITHUB_OUTPUT'"
+          Write-Verbose -Verbose -Message "Setting some output items for use by later jobs"
           Write-Output "my_step_output-singleLine=$(Get-ChildItem '${{ github.workspace }}' | Select-Object Mode, LastWriteTime, Length, Name | ConverTto-Json -Depth 10 -Compress)" >> $env:GITHUB_OUTPUT
           ## can use multi-line strings as values, too; docs at https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter, which link to "Multiline strings" in same doc, too
           $strSomeGuid = (New-Guid).Guid
@@ -41,7 +42,7 @@ jobs:
     steps:
       - name: use data from previous job
         run: |-
-          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-make-some-dater.outputs.my_cool_data': '${{needs.make-some-dater.outputs.my_cool_data}}'"
-          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-make-some-dater.outputs.my_cool_data_fromMultiLine': '${{needs.make-some-dater.outputs.my_step_output-multiLine}}'"
-          $oMyCoolObject = @{Name = "Roscoe"; Datetime = Get-Date; DirectoryListing = '${{needs.make-make-some-dater.outputs.my_cool_data}}' | ConvertFrom-Json}
+          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-some-dater.outputs.myCoolDataFromSingleLine': '${{needs.make-some-dater.outputs.myCoolDataFromSingleLine}}'"
+          Write-Verbose -Verbose -Message "Single-quoted value of 'needs.make-some-dater.outputs.myCoolDataFromMultiline': '${{needs.make-some-dater.outputs.myCoolDataFromMultiline}}'"
+          $oMyCoolObject = @{Name = "Roscoe"; Datetime = Get-Date; DirectoryListing = '${{needs.make-some-dater.outputs.myCoolDataFromSingleLine}}' | ConvertFrom-Json}
           Write-Verbose -Verbose -Message "JSON of new object created with outputs value as sub property: '$($oMyCoolObject | ConvertTo-Json -Depth 10)'"
