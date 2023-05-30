@@ -51,5 +51,5 @@ jobs:
         run: |-
           Write-Verbose -Verbose -Message ("Single-quoted value of 'needs.make-some-dater.outputs.myCoolDataFromSingleLine': '{0}'" -f '${{needs.make-some-dater.outputs.myCoolDataFromSingleLine}}')
           Write-Verbose -Verbose -Message ("Single-quoted value of 'needs.make-some-dater.outputs.myCoolDataFromMultiline': '{0}'" -f '${{needs.make-some-dater.outputs.myCoolDataFromMultiline}}')
-          $oMyCoolObject = @{Name = "Roscoe"; Datetime = Get-Date; DirectoryListing = '${{needs.make-some-dater.outputs.myCoolDataFromSingleLine}}' | ConvertFrom-Json}
+          $oMyCoolObject = @{Name = " San Roscoe"; Datetime = Get-Date; DirectoryListing = '${{needs.make-some-dater.outputs.myCoolDataFromSingleLine}}' | ConvertFrom-Json}
           Write-Verbose -Verbose -Message "JSON of new object created with outputs value as sub property: `n'$($oMyCoolObject | ConvertTo-Json -Depth 10)'"
