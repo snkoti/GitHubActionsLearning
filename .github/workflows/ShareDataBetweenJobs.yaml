@@ -3,7 +3,7 @@ name: GitHub Actions Data Sharing
 on:
   push:
     ## on pushes to given branches
-    branches: super_test_branch
+    branches: main
   workflow_dispatch:
   pull_request:
     types: closed
